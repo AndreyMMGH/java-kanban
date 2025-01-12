@@ -1,9 +1,6 @@
-package test.model;
+package model;
 
-import model.Epic;
-import model.Status;
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EpicTest {

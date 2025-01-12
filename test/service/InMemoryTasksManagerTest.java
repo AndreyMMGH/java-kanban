@@ -1,21 +1,18 @@
-package test.service;
+package service;
 
 import model.Epic;
 import model.Status;
 import model.Subtask;
 import model.Task;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import service.Managers;
-import service.TasksManager;
-
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTasksManagerTest {
 
-    private static TasksManager manager;
+    private TasksManager manager;
 
     @BeforeEach
     public void beforeEach() {
