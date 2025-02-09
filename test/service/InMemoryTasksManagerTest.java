@@ -119,4 +119,18 @@ class InMemoryTasksManagerTest {
         assertEquals(waterTheFlowers.getDescription(), recordedTask.getDescription(), "Описание не совпало");
         assertEquals(waterTheFlowers.getStatus(), recordedTask.getStatus(), "Статус не совпал");
     }
+
+    @Test
+    public void doNotSaveDeletedSubtaskInHistory() {
+        Epic vacationTrip = new Epic("Съездить в отпуск", "Туда, где горы");
+        final int idVacationTrip = manager.addNewEpic(vacationTrip);
+        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", idVacationTrip);
+        int idTravelPlan = manager.addNewSubtask(travelPlan);
+        manager.getSubtask(idTravelPlan);
+        manager.deleteSubTask(idTravelPlan);
+        final List<Task> history = manager.getHistory();
+        for (Task task : history) {
+            assertNotEquals(idTravelPlan, task.getId(), "В истории не должна отображаться удаленная подзадача");
+        }
+    }
 }
