@@ -4,10 +4,12 @@ import model.Epic;
 import model.Status;
 import model.Subtask;
 import model.Task;
+
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryHistoryManagerTest {
@@ -28,10 +30,10 @@ class InMemoryHistoryManagerTest {
         Task snowRemovalHistory = history.getFirst();
         assertNotNull(history, "История не должна быть пустой.");
         assertEquals(1, history.size(), "История не должна быть пустой.");
-        assertEquals(snowRemoval.getId(),snowRemovalHistory.getId(), "id не совпал");
-        assertEquals(snowRemoval.getName(),snowRemovalHistory.getName(), "Имя не совпало");
-        assertEquals(snowRemoval.getDescription(),snowRemovalHistory.getDescription(), "Описание не совпало");
-        assertEquals(snowRemoval.getStatus(),snowRemovalHistory.getStatus(), "Статус не совпал");
+        assertEquals(snowRemoval.getId(), snowRemovalHistory.getId(), "id не совпал");
+        assertEquals(snowRemoval.getName(), snowRemovalHistory.getName(), "Имя не совпало");
+        assertEquals(snowRemoval.getDescription(), snowRemovalHistory.getDescription(), "Описание не совпало");
+        assertEquals(snowRemoval.getStatus(), snowRemovalHistory.getStatus(), "Статус не совпал");
     }
 
     @Test
@@ -42,10 +44,10 @@ class InMemoryHistoryManagerTest {
         Task vacationTripHistory = history.getFirst();
         assertNotNull(history, "История не должна быть пустой.");
         assertEquals(1, history.size(), "История не должна быть пустой.");
-        assertEquals(vacationTrip.getId(),vacationTripHistory.getId(), "id не совпал");
-        assertEquals(vacationTrip.getName(),vacationTripHistory.getName(), "Имя не совпало");
-        assertEquals(vacationTrip.getDescription(),vacationTripHistory.getDescription(), "Описание не совпало");
-        assertEquals(vacationTrip.getStatus(),vacationTripHistory.getStatus(), "Статус не совпал");
+        assertEquals(vacationTrip.getId(), vacationTripHistory.getId(), "id не совпал");
+        assertEquals(vacationTrip.getName(), vacationTripHistory.getName(), "Имя не совпало");
+        assertEquals(vacationTrip.getDescription(), vacationTripHistory.getDescription(), "Описание не совпало");
+        assertEquals(vacationTrip.getStatus(), vacationTripHistory.getStatus(), "Статус не совпал");
     }
 
     @Test
@@ -56,15 +58,15 @@ class InMemoryHistoryManagerTest {
         Task travelPlanHistory = history.getFirst();
         assertNotNull(history, "История не должна быть пустой.");
         assertEquals(1, history.size(), "История не должна быть пустой.");
-        assertEquals(travelPlan.getId(),travelPlanHistory.getId(), "id не совпал");
-        assertEquals(travelPlan.getName(),travelPlanHistory.getName(), "Имя не совпало");
-        assertEquals(travelPlan.getDescription(),travelPlanHistory.getDescription(), "Описание не совпало");
-        assertEquals(travelPlan.getStatus(),travelPlanHistory.getStatus(), "Статус не совпал");
+        assertEquals(travelPlan.getId(), travelPlanHistory.getId(), "id не совпал");
+        assertEquals(travelPlan.getName(), travelPlanHistory.getName(), "Имя не совпало");
+        assertEquals(travelPlan.getDescription(), travelPlanHistory.getDescription(), "Описание не совпало");
+        assertEquals(travelPlan.getStatus(), travelPlanHistory.getStatus(), "Статус не совпал");
     }
 
     @Test
     void shouldAddTasksToLinkedList() {
-        Task snowRemoval = new Task(1,"Почистить снег", "Для чистки взять новую лопату", Status.NEW);
+        Task snowRemoval = new Task(1, "Почистить снег", "Для чистки взять новую лопату", Status.NEW);
         Task waterTheFlowers = new Task(2, "Полить цветы", "Для полива использовать лейку", Status.NEW);
         historyManager.addTask(snowRemoval);
         historyManager.addTask(waterTheFlowers);
@@ -76,7 +78,7 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void shouldRemoveTask() {
-        Epic vacationTrip = new Epic(3,"Съездить в отпуск", "Туда, где горы",Status.NEW);
+        Epic vacationTrip = new Epic(3, "Съездить в отпуск", "Туда, где горы", Status.NEW);
         Epic choosingPpuppy = new Epic(4, "Завести собаку", "Должна быть комнатная порода", Status.NEW);
         historyManager.addTask(vacationTrip);
         historyManager.addTask(choosingPpuppy);
