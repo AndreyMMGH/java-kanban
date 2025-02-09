@@ -25,7 +25,7 @@ class InMemoryHistoryManagerTest {
         Task snowRemoval = new Task("Почистить снег", "Для чистки взять новую лопату");
         historyManager.addTask(snowRemoval);
         final List<Task> history = historyManager.getHistory();
-        Task snowRemovalHistory = history.get(snowRemoval.getId());
+        Task snowRemovalHistory = history.getFirst();
         assertNotNull(history, "История не должна быть пустой.");
         assertEquals(1, history.size(), "История не должна быть пустой.");
         assertEquals(snowRemoval.getId(),snowRemovalHistory.getId(), "id не совпал");
@@ -39,7 +39,7 @@ class InMemoryHistoryManagerTest {
         Epic vacationTrip = new Epic("Съездить в отпуск", "Туда, где горы");
         historyManager.addTask(vacationTrip);
         final List<Task> history = historyManager.getHistory();
-        Task vacationTripHistory = history.get(vacationTrip.getId());
+        Task vacationTripHistory = history.getFirst();
         assertNotNull(history, "История не должна быть пустой.");
         assertEquals(1, history.size(), "История не должна быть пустой.");
         assertEquals(vacationTrip.getId(),vacationTripHistory.getId(), "id не совпал");
@@ -53,7 +53,7 @@ class InMemoryHistoryManagerTest {
         Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", 1);
         historyManager.addTask(travelPlan);
         final List<Task> history = historyManager.getHistory();
-        Task travelPlanHistory = history.get(travelPlan.getId());
+        Task travelPlanHistory = history.getFirst();
         assertNotNull(history, "История не должна быть пустой.");
         assertEquals(1, history.size(), "История не должна быть пустой.");
         assertEquals(travelPlan.getId(),travelPlanHistory.getId(), "id не совпал");
