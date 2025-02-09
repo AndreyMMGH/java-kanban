@@ -133,4 +133,15 @@ class InMemoryTasksManagerTest {
             assertNotEquals(idTravelPlan, task.getId(), "В истории не должна отображаться удаленная подзадача");
         }
     }
+
+    @Test
+    public void deletingSubtaskItMustBeRemovedFromTheEpic() {
+        Epic vacationTrip = new Epic(1, "Съездить в отпуск", "Туда, где горы", Status.NEW);
+        final int idVacationTrip = manager.addNewEpic(vacationTrip);
+        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", idVacationTrip);
+        int idTravelPlan = manager.addNewSubtask(travelPlan);
+        manager.deleteSubTask(idTravelPlan);
+        Epic updatedVacationTrip = manager.getEpic(idVacationTrip);
+        assertFalse(updatedVacationTrip.getSubtaskIds().contains(idTravelPlan), "В списке подзадач эпика не должно быть id удаленной подзадачи");
+    }
 }
