@@ -144,4 +144,16 @@ class InMemoryTasksManagerTest {
         Epic updatedVacationTrip = manager.getEpic(idVacationTrip);
         assertFalse(updatedVacationTrip.getSubtaskIds().contains(idTravelPlan), "В списке подзадач эпика не должно быть id удаленной подзадачи");
     }
+
+    @Test
+    public void allowIdChange() {
+        Task snowRemoval = new Task("Почистить снег", "Для чистки взять новую лопату");
+        int idSnowRemoval = manager.addNewTask(snowRemoval);
+        Task taskFound = manager.getTask(idSnowRemoval);
+        Integer previousId = taskFound.getId();
+        taskFound.setId(950);
+        manager.updateTask(taskFound);
+        Task newTaskFound = manager.getTask(idSnowRemoval);
+        assertNotEquals(previousId, newTaskFound.getId(),"В результате работы этого теста id должны быть разные");
+    }
 }
