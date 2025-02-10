@@ -4,10 +4,12 @@ import model.Epic;
 import model.Status;
 import model.Subtask;
 import model.Task;
+
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTasksManagerTest {
@@ -106,12 +108,12 @@ class InMemoryTasksManagerTest {
         manager.addNewTask(snowRemoval);
         Task waterTheFlowers = new Task("Полить цветы", "Для полива использовать лейку");
         manager.addNewTask(waterTheFlowers);
-        assertNotEquals(snowRemoval.getId(),waterTheFlowers.getId(), "Произошел конфликт. Id одинаковые");
+        assertNotEquals(snowRemoval.getId(), waterTheFlowers.getId(), "Произошел конфликт. Id одинаковые");
     }
 
     @Test
     public void checksTheImmutabilityOfTheTask() {
-        Task waterTheFlowers = new Task(1,"Полить цветы", "Для полива использовать лейку", Status.NEW);
+        Task waterTheFlowers = new Task(1, "Полить цветы", "Для полива использовать лейку", Status.NEW);
         manager.addNewTask(waterTheFlowers);
         Task recordedTask = manager.getTask(waterTheFlowers.getId());
         assertEquals(waterTheFlowers.getId(), recordedTask.getId(), "id не совпал");
@@ -154,6 +156,25 @@ class InMemoryTasksManagerTest {
         taskFound.setId(950);
         manager.updateTask(taskFound);
         Task newTaskFound = manager.getTask(idSnowRemoval);
-        assertNotEquals(previousId, newTaskFound.getId(),"В результате работы этого теста id должны быть разные");
+        assertNotEquals(previousId, newTaskFound.getId(), "В результате работы этого теста id должны быть разные.");
+    }
+
+    @Test
+    public void clearHistoryAfterDeletingAllTasks2() {
+        Task snowRemoval = new Task("Почистить снег", "Для чистки взять новую лопату");
+        Task waterTheFlowers = new Task("Полить цветы", "Для полива использовать лейку");
+        Epic vacationTrip = new Epic("Съездить в отпуск", "Туда, где горы");
+        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", 3);
+        int idSnowRemoval = manager.addNewTask(snowRemoval);
+        int idWaterTheFlowers = manager.addNewTask(waterTheFlowers);
+        int idVacationTrip = manager.addNewEpic(vacationTrip);
+        int idTravelPlan = manager.addNewSubtask(travelPlan);
+        manager.getTask(idSnowRemoval);
+        manager.getTask(idWaterTheFlowers);
+        manager.getEpic(idVacationTrip);
+        manager.getSubtask(idTravelPlan);
+        manager.deleteTasks();
+        final List<Task> history = manager.getHistory();
+        assertEquals(0, history.size(), "В истории должно быть 0 элементов");
     }
 }
