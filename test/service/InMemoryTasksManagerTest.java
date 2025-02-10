@@ -161,21 +161,25 @@ class InMemoryTasksManagerTest {
     }
 
     @Test
-    public void clearHistoryAfterDeletingAllTasks2() {
+    public void clearHistoryAfterDeletingAllTasks() {
         Task snowRemoval = new Task("Почистить снег", "Для чистки взять новую лопату");
         Task waterTheFlowers = new Task("Полить цветы", "Для полива использовать лейку");
         Epic vacationTrip = new Epic("Съездить в отпуск", "Туда, где горы");
-        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", 3);
+        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты",3);
+        Subtask hotelBooking = new Subtask("Забронировать жилье", "Посмотреть гостевые дома и квартиры", 3);
         int idSnowRemoval = manager.addNewTask(snowRemoval);
         int idWaterTheFlowers = manager.addNewTask(waterTheFlowers);
         int idVacationTrip = manager.addNewEpic(vacationTrip);
         int idTravelPlan = manager.addNewSubtask(travelPlan);
+        int idHotelBooking = manager.addNewSubtask(hotelBooking);
         manager.getTask(idSnowRemoval);
         manager.getTask(idWaterTheFlowers);
         manager.getEpic(idVacationTrip);
         manager.getSubtask(idTravelPlan);
+        manager.getSubtask(idHotelBooking);
         manager.deleteTasks();
+        manager.deleteEpics();
         final List<Task> history = manager.getHistory();
-        assertEquals(0, history.size(), "В истории должно быть 0 элементов");
+        assertEquals(0, history.size(), "В истории не должно быть элементов");
     }
 }

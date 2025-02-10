@@ -100,19 +100,4 @@ class InMemoryHistoryManagerTest {
         assertEquals(travelPlan, history.get(0), "В списке должен быть только travelPlan");
     }
 
-    @Test
-    void clearHistoryAfterDeletingAllTasks() {
-        Task snowRemoval = new Task(1, "Почистить снег", "Для чистки взять новую лопату", Status.NEW);
-        Task waterTheFlowers = new Task(2, "Полить цветы", "Для полива использовать лейку", Status.NEW);
-        Epic vacationTrip = new Epic(3, "Съездить в отпуск", "Туда, где горы", Status.NEW);
-        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", vacationTrip.getId());
-        historyManager.addTask(snowRemoval);
-        historyManager.addTask(waterTheFlowers);
-        historyManager.addTask(vacationTrip);
-        historyManager.addTask(travelPlan);
-        historyManager.removeAll();
-        final List<Task> history = historyManager.getHistory();
-        assertEquals(0, history.size(), "История должна быть пустая");
-    }
-
 }
