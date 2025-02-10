@@ -27,13 +27,6 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     @Override
-    public void removeAll() {
-        nodeMap.clear();
-        head = null;
-        tail = null;
-    }
-
-    @Override
     public List<Task> getHistory() {
         return getTasks();
     }
