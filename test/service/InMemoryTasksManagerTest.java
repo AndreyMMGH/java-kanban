@@ -128,6 +128,7 @@ class InMemoryTasksManagerTest {
         final int idVacationTrip = manager.addNewEpic(vacationTrip);
         Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", idVacationTrip);
         int idTravelPlan = manager.addNewSubtask(travelPlan);
+        manager.getEpic(idVacationTrip);
         manager.getSubtask(idTravelPlan);
         manager.deleteSubTask(idTravelPlan);
         final List<Task> history = manager.getHistory();
