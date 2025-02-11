@@ -1,4 +1,5 @@
 package model;
+
 import java.util.ArrayList;
 
 public final class Epic extends Task {
@@ -33,7 +34,7 @@ public final class Epic extends Task {
     public String toString() {
         return "Epic{" +
                 "name= " + name + '\'' +
-                ", description = " + description+ '\'' +
+                ", description = " + description + '\'' +
                 ", id=" + id +
                 ", subtaskIds=" + subtaskIds +
                 ", status = " + status +
