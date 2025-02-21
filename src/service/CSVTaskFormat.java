@@ -39,12 +39,7 @@ public class CSVTaskFormat {
         }
     }
 
-    /*id,type,name,status,description,epic
-    1,TASK,Task1,NEW,Description task1,
-    2,EPIC,Epic2,DONE,Description epic2,
-    3,SUBTASK,Sub Task2,DONE,Description sub task3,2*/
-
-    public static Task taskFormatString(String text) {
+    public static Task taskFromString(String text) {
         final String[] texts = text.split(",");
         final int id = Integer.parseInt(texts[0]);
         final TaskType type = TaskType.valueOf(texts[1]);
@@ -63,7 +58,7 @@ public class CSVTaskFormat {
         return null;
     }
 
-    private static String toString(HistoryManager historyManager) {
+    public static String fromHistoryIdToString(HistoryManager historyManager) {
         List<Task> idsHistory = historyManager.getHistory();
 
         if (idsHistory == null || idsHistory.isEmpty()) {
@@ -74,18 +69,18 @@ public class CSVTaskFormat {
         for (int i = 0; i < idsHistory.size(); i++) {
             idStringBuilder.append(idsHistory.get(i).getId());
 
-            if (i <= idsHistory.size() - 1) {
+            if (i < idsHistory.size() - 1) {
                 idStringBuilder.append(",");
             }
         }
         return idStringBuilder.toString();
     }
 
-    public static List<Integer> historyFromString(String text) {
+    public static List<Integer> fromStringToHistoryId(String text) {
         List<Integer> idsHistory = new ArrayList<>();
 
         if (text == null || text.isEmpty()) {
-            return null;
+            return new ArrayList<>();
         }
 
         String[] idsText = text.split(",");
