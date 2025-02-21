@@ -2,13 +2,19 @@ import model.Task;
 import model.Subtask;
 import model.Epic;
 import model.Status;
+//import service.FileBackedTaskManager;
 import service.Managers;
 import service.TasksManager;
+
+//import java.io.File;
 
 public class Main {
 
     public static void main(String[] args) {
         System.out.println("Поехали!");
+
+        //File file = new File("./resources/task.csv");
+        //FileBackedTaskManager manager = FileBackedTaskManager.loadFromFile(file);
 
         TasksManager manager = Managers.getDefault();
 

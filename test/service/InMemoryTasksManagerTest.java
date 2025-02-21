@@ -19,7 +19,7 @@ class InMemoryTasksManagerTest {
     @BeforeEach
     public void beforeEach() {
 
-        manager = Managers.getDefault();
+        manager = new InMemoryTasksManager();
     }
 
     @Test
