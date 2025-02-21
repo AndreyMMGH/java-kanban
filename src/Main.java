@@ -2,23 +2,23 @@ import model.Task;
 import model.Subtask;
 import model.Epic;
 import model.Status;
-import service.FileBackedTaskManager;
+//import service.FileBackedTaskManager;
 import service.Managers;
 import service.TasksManager;
 
-import java.io.File;
+//import java.io.File;
 
 public class Main {
 
     public static void main(String[] args) {
         System.out.println("Поехали!");
 
-        File file = new File("./resources/task.csv");
-        FileBackedTaskManager manager = FileBackedTaskManager.loadFromFile(file);
+        //File file = new File("./resources/task.csv");
+        //FileBackedTaskManager manager = FileBackedTaskManager.loadFromFile(file);
 
-        //TasksManager manager = Managers.getDefault();
+        TasksManager manager = Managers.getDefault();
 
-        /*Task snowRemoval = new Task("Почистить снег", "Для чистки взять новую лопату");
+        Task snowRemoval = new Task("Почистить снег", "Для чистки взять новую лопату");
         Task waterTheFlowers = new Task("Полить цветы", "Для полива использовать лейку");
         final int idSnowRemoval = manager.addNewTask(snowRemoval);
         final int idWaterTheFlowers = manager.addNewTask(waterTheFlowers);
@@ -39,7 +39,7 @@ public class Main {
         final int idBreedSelection = manager.addNewSubtask(breedSelection);
 
         hotelBooking.setStatus(Status.DONE);
-        manager.updateSubtask(hotelBooking);*/
+        manager.updateSubtask(hotelBooking);
 
         System.out.println("Список задач:");
         for (Task task : manager.getTasks()) {
@@ -60,7 +60,7 @@ public class Main {
             System.out.println(subtask);
         }
 
-        /*manager.getEpic(3);
+        manager.getEpic(3);
         manager.getEpic(4);
         manager.getTask(1);
         manager.getTask(2);
@@ -72,7 +72,7 @@ public class Main {
         manager.getTask(2);
         manager.getSubtask(5);
         manager.getTask(1);
-        manager.getEpic(4);*/
+        manager.getEpic(4);
 
         System.out.println("История:");
         for (Task task : manager.getHistory()) {
