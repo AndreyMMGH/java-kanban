@@ -64,11 +64,13 @@ public class FileBackedTaskManager extends InMemoryTasksManager {
 
             String idsHistoryLine = bufferedReader.readLine();
             if (idsHistoryLine != null && !idsHistoryLine.isEmpty()) {
-                List<Integer> IdsHistory = CSVTaskFormat.fromStringToHistoryId(idsHistoryLine);
-                for (Integer taskId : IdsHistory) {
+                List<Integer> idsHistory = CSVTaskFormat.fromStringToHistoryId(idsHistoryLine);
+
+                for (Integer taskId : idsHistory) {
                     Task task = managerForRecovery.getTask(taskId);
                     Epic epic = managerForRecovery.getEpic(taskId);
                     Subtask subtask = managerForRecovery.getSubtask(taskId);
+
                     if (task != null || epic != null || subtask != null) {
                         managerForRecovery.historyManager.addTask(task);
                     }
