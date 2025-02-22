@@ -19,7 +19,7 @@ import java.util.List;
 public class FileBackedTaskManager extends InMemoryTasksManager {
 
     private final File file;
-    final String HEADER = "id,type,name,status,description,epic";
+    final String Header = "id,type,name,status,description,epic";
 
     public FileBackedTaskManager(File file) {
         this.file = file;
@@ -95,7 +95,7 @@ public class FileBackedTaskManager extends InMemoryTasksManager {
         }
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {
-            writer.write(HEADER);
+            writer.write(Header);
             writer.newLine();
 
             for (Task task : getTasks()) {
