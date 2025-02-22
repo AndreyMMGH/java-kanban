@@ -13,20 +13,13 @@ import java.util.List;
 public class CSVTaskFormat {
 
     public static String toString(Task task) {
-        if (task.getTaskType() == TaskType.TASK) {
+        if (!(task.getTaskType() == TaskType.SUBTASK)) {
             return task.getId() + "," +
                     task.getTaskType() + "," +
                     task.getName() + "," +
                     task.getStatus() + "," +
                     task.getDescription();
-        } else if (task.getTaskType() == TaskType.EPIC) {
-            Epic epic = (Epic) task;
-            return epic.getId() + "," +
-                    epic.getTaskType() + "," +
-                    task.getName() + "," +
-                    epic.getStatus() + "," +
-                    epic.getDescription();
-        } else if (task.getTaskType() == TaskType.SUBTASK) {
+        } else {
             Subtask subtask = (Subtask) task;
             return subtask.getId() + "," +
                     subtask.getTaskType() + "," +
@@ -34,8 +27,6 @@ public class CSVTaskFormat {
                     subtask.getStatus() + "," +
                     subtask.getDescription() + "," +
                     subtask.getEpicId();
-        } else {
-            return "";
         }
     }
 
