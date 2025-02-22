@@ -26,7 +26,7 @@ public class Main {
         Task beforeUpdateSnowRemoval = new Task(idSnowRemoval, "Почистить снег", "Для чистки взять новую лопату", Status.IN_PROGRESS);
         manager.updateTask(beforeUpdateSnowRemoval);
 
-        Epic vacationTrip = new Epic("Съездить в отпуск", "Туда, где горы");
+        Epic vacationTrip = new Epic("Съездить в отпуск", "В горную местность");
         Epic choosingPpuppy = new Epic("Завести собаку", "Должна быть комнатная порода");
         final int idVacationTrip = manager.addNewEpic(vacationTrip);
         final int idChoosingPpuppy = manager.addNewEpic(choosingPpuppy);
