@@ -23,7 +23,7 @@ public class CSVTaskFormat {
             Subtask subtask = (Subtask) task;
             return subtask.getId() + "," +
                     subtask.getTaskType() + "," +
-                    task.getName() + "," +
+                    subtask.getName() + "," +
                     subtask.getStatus() + "," +
                     subtask.getDescription() + "," +
                     subtask.getEpicId();
