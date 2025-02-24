@@ -7,7 +7,7 @@ public final class Epic extends Task {
     private final ArrayList<Integer> subtaskIds = new ArrayList<>();
 
     public Epic(int id, String name, String description, Status status) {
-        super(id, description, name, status);
+        super(id, name, description, status);
     }
 
     public Epic(String name, String description) {
@@ -28,6 +28,11 @@ public final class Epic extends Task {
 
     public void removeSubtask(int id) {
         subtaskIds.remove(Integer.valueOf(id));
+    }
+
+    @Override
+    public TaskType getTaskType() {
+        return TaskType.EPIC;
     }
 
     @Override
