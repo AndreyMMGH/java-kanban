@@ -6,6 +6,8 @@ import model.Subtask;
 import model.Status;
 import model.TaskType;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +20,10 @@ public class CSVTaskFormat {
                     task.getTaskType() + "," +
                     task.getName() + "," +
                     task.getStatus() + "," +
-                    task.getDescription();
+                    task.getDescription() + "," +
+                    task.getStartTime() + "," +
+                    task.getDuration() + "," +
+                    task.getEndTime();
         } else {
             Subtask subtask = (Subtask) task;
             return subtask.getId() + "," +
@@ -26,7 +31,9 @@ public class CSVTaskFormat {
                     subtask.getName() + "," +
                     subtask.getStatus() + "," +
                     subtask.getDescription() + "," +
-                    subtask.getEpicId();
+                    subtask.getEpicId() + "," +
+                    subtask.getStartTime() + "," +
+                    subtask.getDuration();
         }
     }
 
@@ -37,14 +44,17 @@ public class CSVTaskFormat {
         final String name = texts[2];
         final Status status = Status.valueOf(texts[3]);
         final String description = texts[4];
+        final LocalDateTime startTime = LocalDateTime.parse(texts[5]);
+        final Duration duration = Duration.parse(texts[6]);
 
         if (type == TaskType.TASK) {
-            return new Task(id, name, description, status);
+            return new Task(id, name, description, status, startTime, duration);
         } else if (type == TaskType.EPIC) {
-            return new Epic(id, name, description, status);
+            final LocalDateTime endTime = LocalDateTime.parse(texts[7]);
+            return new Epic(id, name, description, status, startTime, duration, endTime);
         } else if (type == TaskType.SUBTASK) {
             final int epicId = Integer.parseInt(texts[5]);
-            return new Subtask(id, name, description, status, epicId);
+            return new Subtask(id, name, description, status, epicId, startTime, duration);
         }
         return null;
     }
