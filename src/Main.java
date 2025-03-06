@@ -6,6 +6,9 @@ import model.Status;
 import service.Managers;
 import service.TasksManager;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 //import java.io.File;
 
 public class Main {
@@ -18,22 +21,22 @@ public class Main {
 
         TasksManager manager = Managers.getDefault();
 
-        Task snowRemoval = new Task("Почистить снег", "Для чистки взять новую лопату");
-        Task waterTheFlowers = new Task("Полить цветы", "Для полива использовать лейку");
+        Task snowRemoval = new Task("Почистить снег", "Для чистки взять новую лопату", LocalDateTime.now(), Duration.ofMinutes(30));
+        Task waterTheFlowers = new Task("Полить цветы", "Для полива использовать лейку", LocalDateTime.now(), Duration.ofMinutes(10));
         final int idSnowRemoval = manager.addNewTask(snowRemoval);
         final int idWaterTheFlowers = manager.addNewTask(waterTheFlowers);
 
-        Task beforeUpdateSnowRemoval = new Task(idSnowRemoval, "Почистить снег", "Для чистки взять новую лопату", Status.IN_PROGRESS);
+        Task beforeUpdateSnowRemoval = new Task(idSnowRemoval, "Почистить снег", "Для чистки взять новую лопату", Status.IN_PROGRESS, LocalDateTime.now(), Duration.ofMinutes(30));
         manager.updateTask(beforeUpdateSnowRemoval);
 
-        Epic vacationTrip = new Epic("Съездить в отпуск", "В горную местность");
-        Epic choosingPpuppy = new Epic("Завести собаку", "Должна быть комнатная порода");
+        Epic vacationTrip = new Epic("Съездить в отпуск", "В горную местность", null, null, null);
+        Epic choosingPpuppy = new Epic("Завести собаку", "Должна быть комнатная порода",null, null, null);
         final int idVacationTrip = manager.addNewEpic(vacationTrip);
         final int idChoosingPpuppy = manager.addNewEpic(choosingPpuppy);
 
-        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", idVacationTrip);
-        Subtask hotelBooking = new Subtask("Забронировать жилье", "Посмотреть гостевые дома и квартиры", idVacationTrip);
-        Subtask breedSelection = new Subtask("Выбрать породу", "Можно длинношерстную", idChoosingPpuppy);
+        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", idVacationTrip, LocalDateTime.now(), Duration.ofMinutes(120));
+        Subtask hotelBooking = new Subtask("Забронировать жилье", "Посмотреть гостевые дома и квартиры", idVacationTrip, LocalDateTime.now().plusMinutes(130), Duration.ofMinutes(100));
+        Subtask breedSelection = new Subtask("Выбрать породу", "Можно длинношерстную", idChoosingPpuppy, LocalDateTime.now(), Duration.ofMinutes(200));
         final int idTravelPlan = manager.addNewSubtask(travelPlan);
         final int idHotelBooking = manager.addNewSubtask(hotelBooking);
         final int idBreedSelection = manager.addNewSubtask(breedSelection);

@@ -8,6 +8,8 @@ import model.Task;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,16 +23,16 @@ class FileBackedTaskManagerTest {
 
         FileBackedTaskManager initialManager = new FileBackedTaskManager(file);
 
-        Task snowRemoval = new Task("Почистить снег", "Для чистки взять новую лопату");
-        Task waterTheFlowers = new Task("Полить цветы", "Для полива использовать лейку");
+        Task snowRemoval = new Task("Почистить снег", "Для чистки взять новую лопату", LocalDateTime.now(), Duration.ofMinutes(30));
+        Task waterTheFlowers = new Task("Полить цветы", "Для полива использовать лейку", LocalDateTime.now(), Duration.ofMinutes(10));
         int idSnowRemoval = initialManager.addNewTask(snowRemoval);
         int idWaterTheFlowers = initialManager.addNewTask(waterTheFlowers);
 
-        Epic vacationTrip = new Epic("Съездить в отпуск", "В горную местность");
+        Epic vacationTrip = new Epic("Съездить в отпуск", "В горную местность", null, null, null);
         int idVacationTrip = initialManager.addNewEpic(vacationTrip);
 
-        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", idVacationTrip);
-        Subtask hotelBooking = new Subtask("Забронировать жилье", "Посмотреть гостевые дома и квартиры", idVacationTrip);
+        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", idVacationTrip, LocalDateTime.now(), Duration.ofMinutes(120));
+        Subtask hotelBooking = new Subtask("Забронировать жилье", "Посмотреть гостевые дома и квартиры", idVacationTrip, LocalDateTime.now().plusMinutes(130), Duration.ofMinutes(100));
         int idTravelPlan = initialManager.addNewSubtask(travelPlan);
         int idHotelBooking = initialManager.addNewSubtask(hotelBooking);
 

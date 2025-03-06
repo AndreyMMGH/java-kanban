@@ -5,6 +5,8 @@ import model.Status;
 import model.Subtask;
 import model.Task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -24,25 +26,25 @@ class InMemoryTasksManagerTest {
 
     @Test
     public void epicCanAddItSelfAsSubtask() {
-        Epic vacationTrip = new Epic(1, "Съездить в отпуск", "Туда, где горы", Status.NEW);
+        Epic vacationTrip = new Epic(1, "Съездить в отпуск", "Туда, где горы", Status.NEW, null, null, null);
         final int idVacationTrip = manager.addNewEpic(vacationTrip);
-        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", idVacationTrip);
+        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", idVacationTrip, LocalDateTime.now(), Duration.ofMinutes(120));
         manager.addNewSubtask(travelPlan);
         assertFalse(vacationTrip.getSubtaskIds().contains(vacationTrip.getId()), "Эпик не может содержать себя в качестве подзадачи");
     }
 
     @Test
     public void subtaskIsNotEqualToItsEpic() {
-        Epic vacationTrip = new Epic("Съездить в отпуск", "Туда, где горы");
+        Epic vacationTrip = new Epic("Съездить в отпуск", "Туда, где горы", null, null, null);
         final int idVacationTrip = manager.addNewEpic(vacationTrip);
-        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", idVacationTrip);
+        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", idVacationTrip, LocalDateTime.now(), Duration.ofMinutes(120));
         manager.addNewSubtask(travelPlan);
         assertNotEquals(idVacationTrip, travelPlan.getId(), "Подзадачу нельзя сделать своим эпиком");
     }
 
     @Test
     public void addTask() {
-        Task waterTheFlowers = new Task("Полить цветы", "Для полива использовать лейку");
+        Task waterTheFlowers = new Task("Полить цветы", "Для полива использовать лейку", LocalDateTime.now(), Duration.ofMinutes(10));
         manager.addNewTask(waterTheFlowers);
         Task recordedTask = manager.getTask(waterTheFlowers.getId());
         assertNotNull(recordedTask, "Такой задачи нет");
@@ -57,8 +59,8 @@ class InMemoryTasksManagerTest {
 
     @Test
     public void addEpic() {
-        Epic vacationTrip = new Epic("Съездить в отпуск", "Туда, где горы");
-        Epic choosingPpuppy = new Epic("Завести собаку", "Должна быть комнатная порода");
+        Epic vacationTrip = new Epic("Съездить в отпуск", "Туда, где горы", null, null, null);
+        Epic choosingPpuppy = new Epic("Завести собаку", "Должна быть комнатная порода", null, null, null);
         manager.addNewEpic(vacationTrip);
         manager.addNewEpic(choosingPpuppy);
         Epic recordedEpic = manager.getEpic(vacationTrip.getId());
@@ -75,13 +77,13 @@ class InMemoryTasksManagerTest {
 
     @Test
     public void addSubtask() {
-        Epic vacationTrip = new Epic("Съездить в отпуск", "Туда, где горы");
-        Epic choosingPpuppy = new Epic("Завести собаку", "Должна быть комнатная порода");
+        Epic vacationTrip = new Epic("Съездить в отпуск", "Туда, где горы", null, null, null);
+        Epic choosingPpuppy = new Epic("Завести собаку", "Должна быть комнатная порода", null, null, null);
         int idVacationTrip = manager.addNewEpic(vacationTrip);
         int idChoosingPpuppy = manager.addNewEpic(choosingPpuppy);
-        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", idVacationTrip);
-        Subtask hotelBooking = new Subtask("Забронировать жилье", "Посмотреть гостевые дома и квартиры", idVacationTrip);
-        Subtask breedSelection = new Subtask("Выбрать породу", "Можно длинношерстную", idChoosingPpuppy);
+        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", idVacationTrip, LocalDateTime.now(), Duration.ofMinutes(120));
+        Subtask hotelBooking = new Subtask("Забронировать жилье", "Посмотреть гостевые дома и квартиры", idVacationTrip, LocalDateTime.now().plusMinutes(130), Duration.ofMinutes(100));
+        Subtask breedSelection = new Subtask("Выбрать породу", "Можно длинношерстную", idChoosingPpuppy, LocalDateTime.now(), Duration.ofMinutes(200));
         manager.addNewSubtask(travelPlan);
         manager.addNewSubtask(hotelBooking);
         manager.addNewSubtask(breedSelection);
@@ -104,16 +106,16 @@ class InMemoryTasksManagerTest {
 
     @Test
     public void tasksWithGivenIdAndGeneratedIdDoNotConflict() {
-        Task snowRemoval = new Task(2, "Почистить снег", "Для чистки взять новую лопату", Status.NEW);
+        Task snowRemoval = new Task(2, "Почистить снег", "Для чистки взять новую лопату", Status.NEW, LocalDateTime.now(), Duration.ofMinutes(30));
         manager.addNewTask(snowRemoval);
-        Task waterTheFlowers = new Task("Полить цветы", "Для полива использовать лейку");
+        Task waterTheFlowers = new Task("Полить цветы", "Для полива использовать лейку", LocalDateTime.now(), Duration.ofMinutes(10));
         manager.addNewTask(waterTheFlowers);
         assertNotEquals(snowRemoval.getId(), waterTheFlowers.getId(), "Произошел конфликт. Id одинаковые");
     }
 
     @Test
     public void checksTheImmutabilityOfTheTask() {
-        Task waterTheFlowers = new Task(1, "Полить цветы", "Для полива использовать лейку", Status.NEW);
+        Task waterTheFlowers = new Task(1, "Полить цветы", "Для полива использовать лейку", Status.NEW, LocalDateTime.now(), Duration.ofMinutes(10));
         manager.addNewTask(waterTheFlowers);
         Task recordedTask = manager.getTask(waterTheFlowers.getId());
         assertEquals(waterTheFlowers.getId(), recordedTask.getId(), "id не совпал");
@@ -124,9 +126,9 @@ class InMemoryTasksManagerTest {
 
     @Test
     public void doNotSaveDeletedSubtaskInHistory() {
-        Epic vacationTrip = new Epic("Съездить в отпуск", "Туда, где горы");
+        Epic vacationTrip = new Epic("Съездить в отпуск", "Туда, где горы", null, null, null);
         final int idVacationTrip = manager.addNewEpic(vacationTrip);
-        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", idVacationTrip);
+        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", idVacationTrip, LocalDateTime.now(), Duration.ofMinutes(120));
         int idTravelPlan = manager.addNewSubtask(travelPlan);
         manager.getEpic(idVacationTrip);
         manager.getSubtask(idTravelPlan);
@@ -139,9 +141,9 @@ class InMemoryTasksManagerTest {
 
     @Test
     public void deletingSubtaskItMustBeRemovedFromTheEpic() {
-        Epic vacationTrip = new Epic(1, "Съездить в отпуск", "Туда, где горы", Status.NEW);
+        Epic vacationTrip = new Epic(1, "Съездить в отпуск", "Туда, где горы", Status.NEW, null, null, null);
         final int idVacationTrip = manager.addNewEpic(vacationTrip);
-        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", idVacationTrip);
+        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", idVacationTrip, LocalDateTime.now(), Duration.ofMinutes(120));
         int idTravelPlan = manager.addNewSubtask(travelPlan);
         manager.deleteSubTask(idTravelPlan);
         Epic updatedVacationTrip = manager.getEpic(idVacationTrip);
@@ -150,7 +152,7 @@ class InMemoryTasksManagerTest {
 
     @Test
     public void allowIdChange() {
-        Task snowRemoval = new Task("Почистить снег", "Для чистки взять новую лопату");
+        Task snowRemoval = new Task("Почистить снег", "Для чистки взять новую лопату", LocalDateTime.now(), Duration.ofMinutes(30));
         int idSnowRemoval = manager.addNewTask(snowRemoval);
         Task taskFound = manager.getTask(idSnowRemoval);
         Integer previousId = taskFound.getId();
@@ -162,11 +164,11 @@ class InMemoryTasksManagerTest {
 
     @Test
     public void clearHistoryAfterDeletingAllTasks() {
-        Task snowRemoval = new Task("Почистить снег", "Для чистки взять новую лопату");
-        Task waterTheFlowers = new Task("Полить цветы", "Для полива использовать лейку");
-        Epic vacationTrip = new Epic("Съездить в отпуск", "Туда, где горы");
-        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты",3);
-        Subtask hotelBooking = new Subtask("Забронировать жилье", "Посмотреть гостевые дома и квартиры", 3);
+        Task snowRemoval = new Task("Почистить снег", "Для чистки взять новую лопату", LocalDateTime.now(), Duration.ofMinutes(30));
+        Task waterTheFlowers = new Task("Полить цветы", "Для полива использовать лейку", LocalDateTime.now(), Duration.ofMinutes(10));
+        Epic vacationTrip = new Epic("Съездить в отпуск", "Туда, где горы", null, null, null);
+        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты",3, LocalDateTime.now(), Duration.ofMinutes(120));
+        Subtask hotelBooking = new Subtask("Забронировать жилье", "Посмотреть гостевые дома и квартиры", 3, LocalDateTime.now().plusMinutes(130), Duration.ofMinutes(100));
         int idSnowRemoval = manager.addNewTask(snowRemoval);
         int idWaterTheFlowers = manager.addNewTask(waterTheFlowers);
         int idVacationTrip = manager.addNewEpic(vacationTrip);
