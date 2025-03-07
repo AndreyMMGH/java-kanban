@@ -38,22 +38,28 @@ public class CSVTaskFormat {
     }
 
     public static Task taskFromString(String text) {
+
         final String[] texts = text.split(",");
         final int id = Integer.parseInt(texts[0]);
         final TaskType type = TaskType.valueOf(texts[1]);
         final String name = texts[2];
         final Status status = Status.valueOf(texts[3]);
         final String description = texts[4];
-        final LocalDateTime startTime = LocalDateTime.parse(texts[5]);
-        final Duration duration = Duration.parse(texts[6]);
+
 
         if (type == TaskType.TASK) {
+            final LocalDateTime startTime = LocalDateTime.parse(texts[5]);
+            final Duration duration = Duration.parse(texts[6]);
             return new Task(id, name, description, status, startTime, duration);
         } else if (type == TaskType.EPIC) {
+            final LocalDateTime startTime = LocalDateTime.parse(texts[5]);
+            final Duration duration = Duration.parse(texts[6]);
             final LocalDateTime endTime = LocalDateTime.parse(texts[7]);
             return new Epic(id, name, description, status, startTime, duration, endTime);
         } else if (type == TaskType.SUBTASK) {
             final int epicId = Integer.parseInt(texts[5]);
+            final LocalDateTime startTime = LocalDateTime.parse(texts[6]);
+            final Duration duration = Duration.parse(texts[7]);
             return new Subtask(id, name, description, status, epicId, startTime, duration);
         }
         return null;
