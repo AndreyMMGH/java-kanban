@@ -183,9 +183,9 @@ public class InMemoryTasksManager implements TasksManager {
 
     @Override
     public void deleteTask(int id) {
+        prioritizedTasks.remove(getTask(id));
         tasks.remove(id);
         historyManager.remove(id);
-        prioritizedTasks.remove(getTask(id));
     }
 
     @Override
@@ -194,14 +194,15 @@ public class InMemoryTasksManager implements TasksManager {
         epics.remove(id);
         historyManager.remove(id);
         for (Integer epicSubtaskId : epicSubtaskIds) {
+            prioritizedTasks.remove(getSubtask(id));
             subtasks.remove(epicSubtaskId);
             historyManager.remove(epicSubtaskId);
-            prioritizedTasks.remove(getSubtask(id));
         }
     }
 
     @Override
     public void deleteSubTask(int id) {
+        prioritizedTasks.remove(getSubtask(id));
         Subtask subtask = subtasks.remove(id);
         if (subtask == null) {
             return;
@@ -209,7 +210,6 @@ public class InMemoryTasksManager implements TasksManager {
         historyManager.remove(id);
         Epic epic = epics.get(subtask.getEpicId());
         epic.removeSubtask(id);
-        prioritizedTasks.remove(getSubtask(id));
         updateEpicStat(epic);
         updateTimeForEpic(epic);
     }
@@ -219,8 +219,8 @@ public class InMemoryTasksManager implements TasksManager {
         List<Task> tasksDelete = new ArrayList<>(tasks.values());
 
         for (Task task : tasksDelete) {
-            historyManager.remove(task.getId());
             prioritizedTasks.remove(task);
+            historyManager.remove(task.getId());
         }
 
         tasks.clear();
@@ -236,8 +236,8 @@ public class InMemoryTasksManager implements TasksManager {
         }
 
         for (Subtask subtask : subtasksDelete) {
-            historyManager.remove(subtask.getId());
             prioritizedTasks.remove(subtask);
+            historyManager.remove(subtask.getId());
         }
 
         epics.clear();
@@ -254,8 +254,8 @@ public class InMemoryTasksManager implements TasksManager {
         }
 
         for (Subtask subtask : subtasksDelete) {
-            historyManager.remove(subtask.getId());
             prioritizedTasks.remove(subtask);
+            historyManager.remove(subtask.getId());
         }
 
         subtasks.clear();

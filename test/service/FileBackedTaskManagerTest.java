@@ -1,5 +1,6 @@
 package service;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import model.Epic;
@@ -14,7 +15,14 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FileBackedTaskManagerTest {
+public class FileBackedTaskManagerTest extends TasksManagerTest<FileBackedTaskManager> {
+    File file;
+
+    @BeforeEach
+    public void setUp() throws IOException {
+        file = new File("./resources/task.csv");
+        manager = new FileBackedTaskManager(file);
+    }
 
     @Test
     void saveAndRestoreTasks() throws IOException {
@@ -24,14 +32,14 @@ class FileBackedTaskManagerTest {
         FileBackedTaskManager initialManager = new FileBackedTaskManager(file);
 
         Task snowRemoval = new Task("Почистить снег", "Для чистки взять новую лопату", LocalDateTime.now(), Duration.ofMinutes(30));
-        Task waterTheFlowers = new Task("Полить цветы", "Для полива использовать лейку", LocalDateTime.now(), Duration.ofMinutes(10));
+        Task waterTheFlowers = new Task("Полить цветы", "Для полива использовать лейку", LocalDateTime.now().minusMinutes(470), Duration.ofMinutes(10));
         int idSnowRemoval = initialManager.addNewTask(snowRemoval);
         int idWaterTheFlowers = initialManager.addNewTask(waterTheFlowers);
 
         Epic vacationTrip = new Epic("Съездить в отпуск", "В горную местность", null, null, null);
         int idVacationTrip = initialManager.addNewEpic(vacationTrip);
 
-        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", idVacationTrip, LocalDateTime.now(), Duration.ofMinutes(120));
+        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", idVacationTrip, LocalDateTime.now().minusMinutes(440), Duration.ofMinutes(120));
         Subtask hotelBooking = new Subtask("Забронировать жилье", "Посмотреть гостевые дома и квартиры", idVacationTrip, LocalDateTime.now().plusMinutes(130), Duration.ofMinutes(100));
         int idTravelPlan = initialManager.addNewSubtask(travelPlan);
         int idHotelBooking = initialManager.addNewSubtask(hotelBooking);
