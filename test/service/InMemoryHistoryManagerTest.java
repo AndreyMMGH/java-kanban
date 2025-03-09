@@ -5,6 +5,8 @@ import model.Status;
 import model.Subtask;
 import model.Task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +26,7 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void addTaskHistoryManager() {
-        Task snowRemoval = new Task("Почистить снег", "Для чистки взять новую лопату");
+        Task snowRemoval = new Task("Почистить снег", "Для чистки взять новую лопату", LocalDateTime.now(), Duration.ofMinutes(30));
         historyManager.addTask(snowRemoval);
         final List<Task> history = historyManager.getHistory();
         Task snowRemovalHistory = history.getFirst();
@@ -38,7 +40,7 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void addEpicHistoryManager() {
-        Epic vacationTrip = new Epic("Съездить в отпуск", "Туда, где горы");
+        Epic vacationTrip = new Epic("Съездить в отпуск", "Туда, где горы", null, null, null);
         historyManager.addTask(vacationTrip);
         final List<Task> history = historyManager.getHistory();
         Task vacationTripHistory = history.getFirst();
@@ -52,7 +54,7 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void addSubtaskHistoryManager() {
-        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", 1);
+        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", 1, LocalDateTime.now(), Duration.ofMinutes(120));
         historyManager.addTask(travelPlan);
         final List<Task> history = historyManager.getHistory();
         Task travelPlanHistory = history.getFirst();
@@ -66,8 +68,8 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void shouldAddTasksToLinkedList() {
-        Task snowRemoval = new Task(1, "Почистить снег", "Для чистки взять новую лопату", Status.NEW);
-        Task waterTheFlowers = new Task(2, "Полить цветы", "Для полива использовать лейку", Status.NEW);
+        Task snowRemoval = new Task(1, "Почистить снег", "Для чистки взять новую лопату", Status.NEW, LocalDateTime.now(), Duration.ofMinutes(30));
+        Task waterTheFlowers = new Task(2, "Полить цветы", "Для полива использовать лейку", Status.NEW, LocalDateTime.now(), Duration.ofMinutes(10));
         historyManager.addTask(snowRemoval);
         historyManager.addTask(waterTheFlowers);
         final List<Task> history = historyManager.getHistory();
@@ -78,8 +80,8 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void shouldRemoveTask() {
-        Epic vacationTrip = new Epic(3, "Съездить в отпуск", "Туда, где горы", Status.NEW);
-        Epic choosingPpuppy = new Epic(4, "Завести собаку", "Должна быть комнатная порода", Status.NEW);
+        Epic vacationTrip = new Epic(3, "Съездить в отпуск", "Туда, где горы", Status.NEW, null, null, null);
+        Epic choosingPpuppy = new Epic(4, "Завести собаку", "Должна быть комнатная порода", Status.NEW, null, null, null);
         historyManager.addTask(vacationTrip);
         historyManager.addTask(choosingPpuppy);
         historyManager.remove(vacationTrip.getId());
@@ -90,7 +92,7 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void addDuplicateTasksToLinkedList() {
-        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", 3);
+        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", 3, LocalDateTime.now(), Duration.ofMinutes(120));
         historyManager.addTask(travelPlan);
         historyManager.addTask(travelPlan);
         historyManager.addTask(travelPlan);
@@ -98,6 +100,63 @@ class InMemoryHistoryManagerTest {
         final List<Task> history = historyManager.getHistory();
         assertEquals(1, history.size(), "В истории должен быть 1 элемент");
         assertEquals(travelPlan, history.get(0), "В списке должен быть только travelPlan");
+    }
+
+    @Test
+    void getEmptyTaskHistory() {
+        Task snowRemoval = new Task("Почистить снег", "Для чистки взять новую лопату", LocalDateTime.now(), Duration.ofMinutes(30));
+        historyManager.addTask(snowRemoval);
+        historyManager.remove(snowRemoval.getId());
+        final List<Task> history = historyManager.getHistory();
+        assertTrue(history.isEmpty(), "История должна быть пустой.");
+    }
+
+    @Test
+    void deleteBeginningOfHistory() {
+        Task snowRemoval = new Task(1, "Почистить снег", "Для чистки взять новую лопату", Status.NEW, LocalDateTime.now(), Duration.ofMinutes(30));
+        Task waterTheFlowers = new Task(2, "Полить цветы", "Для полива использовать лейку", Status.NEW, LocalDateTime.now(), Duration.ofMinutes(10));
+        Epic vacationTrip = new Epic(3, "Съездить в отпуск", "Туда, где горы", Status.NEW, null, null, null);
+        historyManager.addTask(snowRemoval);
+        historyManager.addTask(waterTheFlowers);
+        historyManager.addTask(vacationTrip);
+        historyManager.remove(snowRemoval.getId());
+        final List<Task> history = historyManager.getHistory();
+
+        assertEquals(waterTheFlowers, history.get(0), "Должна быть получена задача waterTheFlowers");
+        assertEquals(vacationTrip, history.get(1), "Должен быть получен эпик vacationTrip");
+        assertEquals(2, history.size(), "В истории должно быть 2 элемента");
+    }
+
+    @Test
+    void deleteMiddlePartOfHistory() {
+        Task snowRemoval = new Task(1, "Почистить снег", "Для чистки взять новую лопату", Status.NEW, LocalDateTime.now(), Duration.ofMinutes(30));
+        Task waterTheFlowers = new Task(2, "Полить цветы", "Для полива использовать лейку", Status.NEW, LocalDateTime.now(), Duration.ofMinutes(10));
+        Epic vacationTrip = new Epic(3, "Съездить в отпуск", "Туда, где горы", Status.NEW, null, null, null);
+        historyManager.addTask(snowRemoval);
+        historyManager.addTask(waterTheFlowers);
+        historyManager.addTask(vacationTrip);
+        historyManager.remove(waterTheFlowers.getId());
+        final List<Task> history = historyManager.getHistory();
+
+        assertEquals(snowRemoval, history.get(0), "Должна быть получена задача snowRemoval");
+        assertEquals(vacationTrip, history.get(1), "Должен быть получен эпик vacationTrip");
+        assertEquals(2, history.size(), "В истории должно быть 2 элемента");
+    }
+
+    @Test
+    void deleteTheEndOfHistory() {
+        Task snowRemoval = new Task(1, "Почистить снег", "Для чистки взять новую лопату", Status.NEW, LocalDateTime.now(), Duration.ofMinutes(30));
+        Task waterTheFlowers = new Task(2, "Полить цветы", "Для полива использовать лейку", Status.NEW, LocalDateTime.now(), Duration.ofMinutes(10));
+        Epic vacationTrip = new Epic(3, "Съездить в отпуск", "Туда, где горы", Status.NEW, null, null, null);
+        historyManager.addTask(snowRemoval);
+        historyManager.addTask(waterTheFlowers);
+        historyManager.addTask(vacationTrip);
+        historyManager.remove(vacationTrip.getId());
+        final List<Task> history = historyManager.getHistory();
+
+        assertEquals(snowRemoval, history.get(0), "Должна быть получена задача snowRemoval");
+        assertEquals(waterTheFlowers, history.get(1), "Должен быть получен эпик waterTheFlowers");
+        assertEquals(2, history.size(), "В истории должно быть 2 элемента");
     }
 
 }

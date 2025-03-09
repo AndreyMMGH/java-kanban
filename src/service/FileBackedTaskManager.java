@@ -19,7 +19,7 @@ import java.util.List;
 public class FileBackedTaskManager extends InMemoryTasksManager {
 
     private final File file;
-    final String header = "id,type,name,status,description,epic";
+    final String header = "id,type,name,status,description,epicId, startTime, duration, endTime";
 
     public FileBackedTaskManager(File file) {
         this.file = file;
@@ -46,6 +46,7 @@ public class FileBackedTaskManager extends InMemoryTasksManager {
 
                     if (task.getTaskType() == TaskType.TASK) {
                         managerForRecovery.tasks.put(task.getId(), task);
+                        managerForRecovery.prioritizedTasks.add(task);
                     }
 
                     if (task.getTaskType() == TaskType.EPIC) {
@@ -54,6 +55,8 @@ public class FileBackedTaskManager extends InMemoryTasksManager {
 
                     if (task.getTaskType() == TaskType.SUBTASK) {
                         managerForRecovery.subtasks.put(task.getId(), (Subtask) task);
+                        Subtask subtask = (Subtask) task;
+                        managerForRecovery.prioritizedTasks.add(subtask);
                     }
                 }
             }
@@ -175,7 +178,7 @@ public class FileBackedTaskManager extends InMemoryTasksManager {
 
     @Override
     public void deleteSubTask(int id) {
-        super.deleteEpic(id);
+        super.deleteSubTask(id);
         save();
     }
 

@@ -1,5 +1,6 @@
 package service;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import model.Epic;
@@ -8,11 +9,20 @@ import model.Task;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class FileBackedTaskManagerTest {
+public class FileBackedTaskManagerTest extends TasksManagerTest<FileBackedTaskManager> {
+    File file;
+
+    @BeforeEach
+    public void setUp() throws IOException {
+        file = new File("./resources/task.csv");
+        manager = new FileBackedTaskManager(file);
+    }
 
     @Test
     void saveAndRestoreTasks() throws IOException {
@@ -21,16 +31,16 @@ class FileBackedTaskManagerTest {
 
         FileBackedTaskManager initialManager = new FileBackedTaskManager(file);
 
-        Task snowRemoval = new Task("Почистить снег", "Для чистки взять новую лопату");
-        Task waterTheFlowers = new Task("Полить цветы", "Для полива использовать лейку");
+        Task snowRemoval = new Task("Почистить снег", "Для чистки взять новую лопату", LocalDateTime.now(), Duration.ofMinutes(30));
+        Task waterTheFlowers = new Task("Полить цветы", "Для полива использовать лейку", LocalDateTime.now().minusMinutes(470), Duration.ofMinutes(10));
         int idSnowRemoval = initialManager.addNewTask(snowRemoval);
         int idWaterTheFlowers = initialManager.addNewTask(waterTheFlowers);
 
-        Epic vacationTrip = new Epic("Съездить в отпуск", "В горную местность");
+        Epic vacationTrip = new Epic("Съездить в отпуск", "В горную местность", null, null, null);
         int idVacationTrip = initialManager.addNewEpic(vacationTrip);
 
-        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", idVacationTrip);
-        Subtask hotelBooking = new Subtask("Забронировать жилье", "Посмотреть гостевые дома и квартиры", idVacationTrip);
+        Subtask travelPlan = new Subtask("Составить план поездки", "Выбрать регион и туристические маршруты", idVacationTrip, LocalDateTime.now().minusMinutes(440), Duration.ofMinutes(120));
+        Subtask hotelBooking = new Subtask("Забронировать жилье", "Посмотреть гостевые дома и квартиры", idVacationTrip, LocalDateTime.now().plusMinutes(130), Duration.ofMinutes(100));
         int idTravelPlan = initialManager.addNewSubtask(travelPlan);
         int idHotelBooking = initialManager.addNewSubtask(hotelBooking);
 
@@ -51,27 +61,38 @@ class FileBackedTaskManagerTest {
         assertEquals(snowRemoval.getName(), subsequentSnowRemoval.getName(), "Имя у subsequentSnowRemoval должно быть таким же, как у snowRemoval");
         assertEquals(snowRemoval.getDescription(), subsequentSnowRemoval.getDescription(), "Описание у subsequentSnowRemoval должно быть таким же, как у snowRemoval");
         assertEquals(snowRemoval.getStatus(), subsequentSnowRemoval.getStatus(), "Статус у subsequentSnowRemoval должен быть таким же, как у snowRemoval");
+        assertEquals(snowRemoval.getStartTime(), subsequentSnowRemoval.getStartTime(), "Начальное время у subsequentSnowRemoval должно быть таким же, как snowRemoval");
+        assertEquals(snowRemoval.getDuration(), subsequentSnowRemoval.getDuration(), "Продолжительность у subsequentSnowRemoval должна быть такая же, как у snowRemoval");
 
         assertEquals(waterTheFlowers.getName(), subsequentWaterTheFlowers.getName(), "Имя у subsequentWaterTheFlowers должно быть таким же, как у waterTheFlowers");
         assertEquals(waterTheFlowers.getDescription(), subsequentWaterTheFlowers.getDescription(), "Описание у subsequentWaterTheFlowers должно быть таким же, как у waterTheFlowers");
         assertEquals(waterTheFlowers.getStatus(), subsequentWaterTheFlowers.getStatus(), "Статус у subsequentWaterTheFlowers должен быть таким же, как у waterTheFlowers");
+        assertEquals(waterTheFlowers.getStartTime(), subsequentWaterTheFlowers.getStartTime(), "Начальное время у subsequentWaterTheFlowers должно быть таким же, как waterTheFlowers");
+        assertEquals(waterTheFlowers.getDuration(), subsequentWaterTheFlowers.getDuration(), "Продолжительность у subsequentWaterTheFlowers должна быть такая же, как у waterTheFlowers");
 
         assertEquals(vacationTrip.getName(), subsequentVacationTrip.getName(), "Имя у subsequentVacationTrip должно быть таким же, как у vacationTrip");
         assertEquals(vacationTrip.getDescription(), subsequentVacationTrip.getDescription(), "Описание у subsequentVacationTrip должно быть таким же, как у vacationTrip");
         assertEquals(vacationTrip.getStatus(), subsequentVacationTrip.getStatus(), "Статус у subsequentVacationTrip должен быть таким же, как у vacationTrip");
         assertEquals(vacationTrip.getSubtaskIds(), subsequentVacationTrip.getSubtaskIds(), "Список подзадач у subsequentVacationTrip должен быть таким же, как у vacationTrip");
+        assertEquals(vacationTrip.getStartTime(), subsequentVacationTrip.getStartTime(), "Начальное время у subsequentVacationTrip должно быть таким же, как vacationTrip");
+        assertEquals(vacationTrip.getDuration(), subsequentVacationTrip.getDuration(), "Продолжительность у subsequentVacationTrip должна быть такая же, как у vacationTrip");
+        assertEquals(vacationTrip.getEndTime(), subsequentVacationTrip.getEndTime(), "Конечное время у subsequentVacationTrip должно быть таким же, как vacationTrip");
 
         assertEquals(travelPlan.getName(), subsequentTravelPlan.getName(), "Имя у subsequentTravelPlan должно быть таким же, как у travelPlan");
         assertEquals(travelPlan.getDescription(), subsequentTravelPlan.getDescription(), "Описание у subsequentTravelPlan должно быть таким же, как у travelPlan");
         assertEquals(travelPlan.getStatus(), subsequentTravelPlan.getStatus(), "Статус у subsequentTravelPlan должен быть таким же, как у travelPlan");
         assertEquals(travelPlan.getEpicId(), subsequentTravelPlan.getEpicId(), "epicId у subsequentTravelPlan должен быть таким же, как у travelPlan");
         assertEquals(vacationTrip.getId(), subsequentTravelPlan.getEpicId(), "epicId у subsequentTravelPlan должен быть таким же, как id у vacationTrip");
+        assertEquals(travelPlan.getStartTime(), subsequentTravelPlan.getStartTime(), "Начальное время у subsequentTravelPlan должно быть таким же, как travelPlan");
+        assertEquals(travelPlan.getDuration(), subsequentTravelPlan.getDuration(), "Продолжительность у subsequentTravelPlan должна быть такая же, как у travelPlan");
 
         assertEquals(hotelBooking.getName(), subsequentHotelBooking.getName(), "Имя у subsequentHotelBooking должно быть таким же, как у hotelBooking");
         assertEquals(hotelBooking.getDescription(), subsequentHotelBooking.getDescription(), "Описание у subsequentHotelBooking должно быть таким же, как у hotelBooking");
         assertEquals(hotelBooking.getStatus(), subsequentHotelBooking.getStatus(), "Статус у subsequentHotelBooking должен быть таким же, как у hotelBooking");
         assertEquals(hotelBooking.getEpicId(), subsequentHotelBooking.getEpicId(), "epicId у subsequentHotelBooking должен быть таким же, как у hotelBooking");
         assertEquals(vacationTrip.getId(), subsequentHotelBooking.getEpicId(), "epicId у subsequentHotelBooking должен быть таким же, как id у vacationTrip");
+        assertEquals(hotelBooking.getStartTime(), subsequentHotelBooking.getStartTime(), "Начальное время у subsequentHotelBooking должно быть таким же, как hotelBooking");
+        assertEquals(hotelBooking.getDuration(), subsequentHotelBooking.getDuration(), "Продолжительность у subsequentHotelBooking должна быть такая же, как у hotelBooking");
 
         List<Task> initialIdsHistory = initialManager.historyManager.getHistory();
         List<Task> subsequentIdsHistory = subsequentManager.historyManager.getHistory();

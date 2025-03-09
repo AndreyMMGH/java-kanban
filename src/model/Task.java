@@ -1,22 +1,31 @@
 package model;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 public class Task {
     protected String name;
     protected String description;
     protected int id;
     protected Status status;
+    protected Duration duration;
+    protected LocalDateTime startTime;
 
-    public Task(int id, String name, String description, Status status) {
+    public Task(int id, String name, String description, Status status, LocalDateTime startTime, Duration duration) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.status = status;
+        this.startTime = startTime;
+        this.duration = duration;
     }
 
-    public Task(String name, String description) {
+    public Task(String name, String description, LocalDateTime startTime, Duration duration) {
         this.name = name;
         this.description = description;
         this.status = Status.NEW;
+        this.startTime = startTime;
+        this.duration = duration;
     }
 
     public String getDescription() {
@@ -29,6 +38,22 @@ public class Task {
 
     public int getId() {
         return id;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
     }
 
     public void setId(int id) {
@@ -55,6 +80,14 @@ public class Task {
         return TaskType.TASK;
     }
 
+    public LocalDateTime getEndTime() {
+        if (startTime == null) {
+            return null;
+        }
+        return startTime.plus(duration);
+    }
+
+
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
@@ -78,6 +111,8 @@ public class Task {
                 ", description='" + description + '\'' +
                 ", id=" + id +
                 ", status='" + status + '\'' +
+                ", duration='" + duration + '\'' +
+                ", startTime='" + startTime + '\'' +
                 '}';
     }
 }
