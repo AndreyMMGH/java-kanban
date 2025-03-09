@@ -349,15 +349,12 @@ public abstract class TasksManagerTest<T extends TasksManager> {
         manager.addNewSubtask(travelPlan);
         manager.addNewSubtask(hotelBooking);
 
-        manager.updateTimeForEpic(vacationTrip);
-
         Epic updatedEpic = manager.getEpic(idVacationTrip);
 
         LocalDateTime updatedStartTime = travelPlan.getStartTime();
         assertEquals(updatedStartTime, updatedEpic.getStartTime(), "Стартовое время у ранней подзадачи и эпика должно быть одинаковое");
 
-        LocalDateTime updatedEndTime = hotelBooking.getStartTime().plus(hotelBooking.getDuration());
-        Duration updateDuration = Duration.between(updatedStartTime, updatedEndTime);
-        assertEquals(updateDuration, updatedEpic.getDuration(), "Продолжительность эпика должна быть рассчитана по времени от начала самой ранней подзадачи до конца самой поздней подзадачи");
+        Duration updateDuration = travelPlan.getDuration().plus(hotelBooking.getDuration());
+        assertEquals(updateDuration, updatedEpic.getDuration(), "Продолжительность эпика должна быть рассчитана по времени от начала самой ранней подзадачи + продолжительность всех задач");
     }
 }

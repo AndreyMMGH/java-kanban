@@ -49,6 +49,5 @@ public interface TasksManager {
 
     List<Task> getPrioritizedTasks();
 
-    void updateTimeForEpic(Epic epic);
 
 }

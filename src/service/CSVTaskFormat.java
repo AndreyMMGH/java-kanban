@@ -21,6 +21,7 @@ public class CSVTaskFormat {
                     task.getName() + "," +
                     task.getStatus() + "," +
                     task.getDescription() + "," +
+                    " " + "," +
                     task.getStartTime() + "," +
                     task.getDuration() + "," +
                     task.getEndTime();
@@ -45,21 +46,16 @@ public class CSVTaskFormat {
         final String name = texts[2];
         final Status status = Status.valueOf(texts[3]);
         final String description = texts[4];
-
+        final LocalDateTime startTime = LocalDateTime.parse(texts[6]);
+        final Duration duration = Duration.parse(texts[7]);
 
         if (type == TaskType.TASK) {
-            final LocalDateTime startTime = LocalDateTime.parse(texts[5]);
-            final Duration duration = Duration.parse(texts[6]);
             return new Task(id, name, description, status, startTime, duration);
         } else if (type == TaskType.EPIC) {
-            final LocalDateTime startTime = LocalDateTime.parse(texts[5]);
-            final Duration duration = Duration.parse(texts[6]);
-            final LocalDateTime endTime = LocalDateTime.parse(texts[7]);
+            final LocalDateTime endTime = LocalDateTime.parse(texts[8]);
             return new Epic(id, name, description, status, startTime, duration, endTime);
         } else if (type == TaskType.SUBTASK) {
             final int epicId = Integer.parseInt(texts[5]);
-            final LocalDateTime startTime = LocalDateTime.parse(texts[6]);
-            final Duration duration = Duration.parse(texts[7]);
             return new Subtask(id, name, description, status, epicId, startTime, duration);
         }
         return null;
