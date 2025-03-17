@@ -34,7 +34,8 @@ public class CSVTaskFormat {
                     subtask.getDescription() + "," +
                     subtask.getEpicId() + "," +
                     subtask.getStartTime() + "," +
-                    subtask.getDuration();
+                    subtask.getDuration() + "," +
+                    subtask.getEndTime();
         }
     }
 
