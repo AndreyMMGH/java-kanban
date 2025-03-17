@@ -307,7 +307,7 @@ public class InMemoryTasksManager implements TasksManager {
                 endTime = subtaskEndTime;
             }
 
-            totalDuration = totalDuration.plus(Duration.between(subtaskStartTime, subtaskEndTime));
+            totalDuration = totalDuration.plus(subtask.getDuration());
         }
 
         if (startTime != null && endTime != null) {
