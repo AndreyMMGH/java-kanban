@@ -1,4 +1,9 @@
 package http.handler;
 
-public class EpicHandler {
+import service.TasksManager;
+
+public class EpicHandler extends BaseHttpHandler {
+    public EpicHandler(TasksManager manager) {
+        super(manager);
+    }
 }
