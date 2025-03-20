@@ -4,12 +4,12 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class Task {
+    protected int id;
     protected String name;
     protected String description;
-    protected int id;
     protected Status status;
-    protected Duration duration;
     protected LocalDateTime startTime;
+    protected Duration duration;
 
     public Task(int id, String name, String description, Status status, LocalDateTime startTime, Duration duration) {
         this.id = id;

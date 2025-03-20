@@ -31,11 +31,11 @@ public class BaseHttpHandler implements HttpHandler {
     }
 
     protected void sendNotFound(HttpExchange httpExchange) throws IOException {
-        sendText(httpExchange, "Задача не найдена", 404 );
+        sendText(httpExchange, "Не найдено", 404);
     }
 
     protected void sendHasInteractions(HttpExchange httpExchange) throws IOException {
-        sendText(httpExchange,"Задача пересекается с существующими", 406);
+        sendText(httpExchange, "Произошло пересечение по времени", 406);
     }
 
     protected Gson gson = new GsonBuilder()

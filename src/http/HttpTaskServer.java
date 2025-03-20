@@ -1,13 +1,12 @@
 package http;
 
 import com.sun.net.httpserver.HttpServer;
-import  http.handler.PrioritizedHandler;
+import http.handler.PrioritizedHandler;
 import http.handler.EpicHandler;
 import http.handler.HistoryHandler;
 import http.handler.SubtaskHandler;
 import http.handler.TaskHandler;
-import model.Task;
-import service.Managers;
+import service.InMemoryTasksManager;
 import service.TasksManager;
 
 import java.io.IOException;
@@ -29,7 +28,8 @@ public class HttpTaskServer {
 
 
     public static void main(String[] args) throws IOException {
-        HttpTaskServer httpTaskServer = new HttpTaskServer(Managers.getDefault());
+        InMemoryTasksManager manager = new InMemoryTasksManager();
+        HttpTaskServer httpTaskServer = new HttpTaskServer(manager);
         httpTaskServer.start();
     }
 

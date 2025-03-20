@@ -2,9 +2,11 @@ package http.handler;
 
 import com.sun.net.httpserver.HttpExchange;
 import model.Task;
+import service.TaskValidationException;
 import service.TasksManager;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 public class TaskHandler extends BaseHttpHandler {
     public TaskHandler(TasksManager manager) {
@@ -18,44 +20,62 @@ public class TaskHandler extends BaseHttpHandler {
 
         switch (method) {
             case "GET":
-                handelGetTask(httpExchange, pathTask);
+                handleGetTask(httpExchange, pathTask);
                 break;
             case "POST":
-                handelPostTask(httpExchange);
+                handlePostTask(httpExchange);
                 break;
             case "DELETE":
-                handelDeleteTask(httpExchange, pathTask);
+                handleDeleteTask(httpExchange, pathTask);
                 break;
             default:
                 sendNotFound(httpExchange);
         }
     }
 
-    private void handelGetTask(HttpExchange httpExchange, String[] path) throws IOException {
-        if (path.length == 2) {
+    private void handleGetTask(HttpExchange httpExchange, String[] path) throws IOException {
+        if (path.length == 2 && path[1].equals("tasks")) {
             text = gson.toJson(manager.getTasks());
             sendText(httpExchange, text, 200);
         } else {
             try {
-                int id = Integer.parseInt(path[2]);
-                Task task = manager.getTask(id);
-                if (task != null) {
+                int idTask = Integer.parseInt(path[2]);
+                Task task = manager.getTask(idTask);
+                if (task == null) {
+                    sendNotFound(httpExchange);
+                } else {
                     text = gson.toJson(task);
                     sendText(httpExchange, text, 200);
-                } else {
-                    sendNotFound(httpExchange);
                 }
-            } catch (StringIndexOutOfBoundsException | NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 sendNotFound(httpExchange);
             }
         }
     }
 
-    private void handelPostTask(HttpExchange httpExchange) throws IOException {
-
+    private void handlePostTask(HttpExchange httpExchange) throws IOException {
+        String body = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+        try {
+            Task task = gson.fromJson(body, Task.class);
+            if (manager.getTask(task.getId()) == null) {
+                manager.addNewTask(task);
+                sendText(httpExchange, "Задача создана", 201);
+            } else {
+                manager.updateTask(task);
+                sendText(httpExchange, "Задача обновлена", 201);
+            }
+        } catch (TaskValidationException e) {
+            sendHasInteractions(httpExchange);
+        }
     }
 
-    private void handelDeleteTask(HttpExchange httpExchange, String[] path) throws IOException {
-
+    private void handleDeleteTask(HttpExchange httpExchange, String[] path) throws IOException {
+        try {
+            int idTask = Integer.parseInt(path[2]);
+            manager.deleteTask(idTask);
+            sendText(httpExchange, "Задача удалена", 200);
+        } catch (NumberFormatException e) {
+            sendNotFound(httpExchange);
+        }
     }
 }
