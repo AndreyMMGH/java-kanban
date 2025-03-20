@@ -1,5 +1,6 @@
 package http.handler;
 
+import http.exception.NotFoundException;
 import model.Subtask;
 import model.Epic;
 import com.sun.net.httpserver.HttpExchange;
@@ -35,51 +36,40 @@ public class EpicHandler extends BaseHttpHandler {
     }
 
     private void handleGetEpic(HttpExchange httpExchange, String[] path) throws IOException {
-        if (path.length == 2 && path[1].equals("epics")) {
-            text = gson.toJson(manager.getEpics());
-            sendText(httpExchange, text, 200);
-        } else if (path.length == 3 && path[1].equals("epics")) {
-            try {
+        try {
+            if (path.length == 2 && path[1].equals("epics")) {
+                text = gson.toJson(manager.getEpics());
+                sendText(httpExchange, text, 200);
+            } else if (path.length == 3 && path[1].equals("epics")) {
                 int idEpic = Integer.parseInt(path[2]);
                 Epic epic = manager.getEpic(idEpic);
-                if (epic == null) {
-                    sendNotFound(httpExchange);
-                } else {
-                    text = gson.toJson(epic);
-                    sendText(httpExchange, text, 200);
-                }
-            } catch (NumberFormatException e) {
-                sendNotFound(httpExchange);
-            }
-        } else if (path.length == 4 && path[3].equals("subtasks")) {
-            try {
+                text = gson.toJson(epic);
+                sendText(httpExchange, text, 200);
+            } else if (path.length == 4 && path[3].equals("subtasks")) {
                 int idEpic = Integer.parseInt(path[2]);
                 List<Subtask> subtasksIds = manager.getEpicSubtasks(idEpic);
-                if (subtasksIds == null || subtasksIds.isEmpty()) {
-                    sendNotFound(httpExchange);
-                } else {
+                if (!subtasksIds.isEmpty()) {
                     text = gson.toJson(subtasksIds);
                     sendText(httpExchange, text, 200);
+                } else {
+                    sendNotFound(httpExchange);
                 }
-            } catch (NumberFormatException e) {
-                sendNotFound(httpExchange);
             }
+        } catch (NotFoundException | NumberFormatException e) {
+            sendNotFound(httpExchange);
         }
     }
 
     private void handlePostEpic(HttpExchange httpExchange) throws IOException {
         String body = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+        Epic epic = gson.fromJson(body, Epic.class);
         try {
-            Epic epic = gson.fromJson(body, Epic.class);
-            if (manager.getEpic(epic.getId()) == null) {
-                manager.addNewEpic(epic);
-                sendText(httpExchange, "Эпик добавлен", 201);
-            } else {
-                sendNotFound(httpExchange);
-            }
-        } catch (NumberFormatException e) {
+            manager.addNewEpic(epic);
+            sendText(httpExchange, "Эпик добавлен", 201);
+        } catch (NotFoundException e) {
             sendNotFound(httpExchange);
         }
+
     }
 
     private void handleDeleteEpic(HttpExchange httpExchange, String[] path) throws IOException {

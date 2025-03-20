@@ -1,6 +1,7 @@
 package http.handler;
 
 import com.sun.net.httpserver.HttpExchange;
+import http.exception.NotFoundException;
 import model.Task;
 import service.TaskValidationException;
 import service.TasksManager;
@@ -34,37 +35,34 @@ public class TaskHandler extends BaseHttpHandler {
     }
 
     private void handleGetTask(HttpExchange httpExchange, String[] path) throws IOException {
-        if (path.length == 2 && path[1].equals("tasks")) {
-            text = gson.toJson(manager.getTasks());
-            sendText(httpExchange, text, 200);
-        } else {
-            try {
+        try {
+            if (path.length == 2 && path[1].equals("tasks")) {
+                text = gson.toJson(manager.getTasks());
+                sendText(httpExchange, text, 200);
+            } else {
                 int idTask = Integer.parseInt(path[2]);
                 Task task = manager.getTask(idTask);
-                if (task == null) {
-                    sendNotFound(httpExchange);
-                } else {
-                    text = gson.toJson(task);
-                    sendText(httpExchange, text, 200);
-                }
-            } catch (NumberFormatException e) {
-                sendNotFound(httpExchange);
+                text = gson.toJson(task);
+                sendText(httpExchange, text, 200);
             }
+        } catch (NumberFormatException | NotFoundException e) {
+            sendNotFound(httpExchange);
         }
     }
 
     private void handlePostTask(HttpExchange httpExchange) throws IOException {
-        String body = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
         try {
+            String body = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
             Task task = gson.fromJson(body, Task.class);
-            if (manager.getTask(task.getId()) == null) {
-                manager.addNewTask(task);
-                sendText(httpExchange, "Задача создана", 201);
-            } else {
+            try {
+                manager.getTask(task.getId());
                 manager.updateTask(task);
                 sendText(httpExchange, "Задача обновлена", 201);
+            } catch (NotFoundException e) {
+                manager.addNewTask(task);
+                sendText(httpExchange, "Задача создана", 201);
             }
-        } catch (TaskValidationException e) {
+        } catch (Exception e) {
             sendHasInteractions(httpExchange);
         }
     }

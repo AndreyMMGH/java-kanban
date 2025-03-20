@@ -1,8 +1,8 @@
 package http.handler;
 
 import com.sun.net.httpserver.HttpExchange;
+import http.exception.NotFoundException;
 import model.Subtask;
-import service.TaskValidationException;
 import service.TasksManager;
 
 import java.io.IOException;
@@ -34,37 +34,34 @@ public class SubtaskHandler extends BaseHttpHandler {
     }
 
     private void handleGetSubtask(HttpExchange httpExchange, String[] path) throws IOException {
-        if (path.length == 2 && path[1].equals("subtasks")) {
-            text = gson.toJson(manager.getSubtasks());
-            sendText(httpExchange, text, 200);
-        } else {
-            try {
+        try {
+            if (path.length == 2 && path[1].equals("subtasks")) {
+                text = gson.toJson(manager.getSubtasks());
+                sendText(httpExchange, text, 200);
+            } else {
                 int idSubtask = Integer.parseInt(path[2]);
                 Subtask subtask = manager.getSubtask(idSubtask);
-                if (subtask == null) {
-                    sendNotFound(httpExchange);
-                } else {
-                    text = gson.toJson(subtask);
-                    sendText(httpExchange, text, 200);
-                }
-            } catch (NumberFormatException e) {
-                sendNotFound(httpExchange);
+                text = gson.toJson(subtask);
+                sendText(httpExchange, text, 200);
             }
+        } catch (NumberFormatException | NotFoundException e) {
+            sendNotFound(httpExchange);
         }
     }
 
     private void handlePostSubtask(HttpExchange httpExchange) throws IOException {
-        String body = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
         try {
+            String body = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
             Subtask subtask = gson.fromJson(body, Subtask.class);
-            if (manager.getSubtask(subtask.getId()) == null) {
-                manager.addNewSubtask(subtask);
-                sendText(httpExchange, "Подзадача создана", 201);
-            } else {
+            try {
+                manager.getSubtask(subtask.getId());
                 manager.updateSubtask(subtask);
                 sendText(httpExchange, "Подзадача обновлена", 201);
+            } catch (NotFoundException e) {
+                manager.addNewSubtask(subtask);
+                sendText(httpExchange, "Подзадача создана", 201);
             }
-        } catch (TaskValidationException e) {
+        } catch (Exception e) {
             sendHasInteractions(httpExchange);
         }
     }

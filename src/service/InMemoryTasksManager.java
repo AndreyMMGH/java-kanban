@@ -1,5 +1,6 @@
 package service;
 
+import http.exception.NotFoundException;
 import model.Epic;
 import model.Status;
 import model.Subtask;
@@ -69,6 +70,9 @@ public class InMemoryTasksManager implements TasksManager {
     @Override
     public Task getTask(int id) {
         Task task = tasks.get(id);
+        if (task == null) {
+            throw new NotFoundException("Задача с данным id: " + id + " не найдена");
+        }
         historyManager.addTask(task);
         return tasks.get(id);
     }
@@ -76,6 +80,9 @@ public class InMemoryTasksManager implements TasksManager {
     @Override
     public Subtask getSubtask(int id) {
         Subtask subtask = subtasks.get(id);
+        if (subtask == null) {
+            throw new NotFoundException("Подзадача с данным id: " + id + " не найдена");
+        }
         historyManager.addTask(subtask);
         return subtasks.get(id);
     }
@@ -83,6 +90,9 @@ public class InMemoryTasksManager implements TasksManager {
     @Override
     public Epic getEpic(int id) {
         Epic epic = epics.get(id);
+        if (epic == null) {
+            throw new NotFoundException("Эпик с данным id: " + id + " не найден");
+        }
         historyManager.addTask(epic);
         return epics.get(id);
     }
