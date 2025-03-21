@@ -1,11 +1,12 @@
 package http.handler;
 
 import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
 import service.TasksManager;
 
 import java.io.IOException;
 
-public class HistoryHandler extends BaseHttpHandler {
+public class HistoryHandler extends BaseHttpHandler implements HttpHandler {
     public HistoryHandler(TasksManager manager) {
         super(manager);
     }
@@ -24,7 +25,6 @@ public class HistoryHandler extends BaseHttpHandler {
     }
 
     private void handleGetHistory(HttpExchange httpExchange) throws IOException {
-        text = gson.toJson(manager.getHistory());
-        sendText(httpExchange, text, 200);
+        sendText(httpExchange, gson.toJson(manager.getHistory()), 200);
     }
 }

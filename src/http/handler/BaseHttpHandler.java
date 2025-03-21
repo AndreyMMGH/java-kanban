@@ -13,9 +13,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
-public class BaseHttpHandler implements HttpHandler {
+public abstract class BaseHttpHandler {
 
-    protected String text;
     protected TasksManager manager;
 
     public BaseHttpHandler(TasksManager manager) {
@@ -44,7 +43,4 @@ public class BaseHttpHandler implements HttpHandler {
             .setPrettyPrinting()
             .create();
 
-    @Override
-    public void handle(HttpExchange exchange) throws IOException {
-    }
 }

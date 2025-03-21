@@ -1,5 +1,6 @@
 package http.handler;
 
+import com.sun.net.httpserver.HttpHandler;
 import http.exception.NotFoundException;
 import model.Subtask;
 import model.Epic;
@@ -10,7 +11,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-public class EpicHandler extends BaseHttpHandler {
+public class EpicHandler extends BaseHttpHandler implements HttpHandler {
     public EpicHandler(TasksManager manager) {
         super(manager);
     }
@@ -38,19 +39,16 @@ public class EpicHandler extends BaseHttpHandler {
     private void handleGetEpic(HttpExchange httpExchange, String[] path) throws IOException {
         try {
             if (path.length == 2 && path[1].equals("epics")) {
-                text = gson.toJson(manager.getEpics());
-                sendText(httpExchange, text, 200);
+                sendText(httpExchange, gson.toJson(manager.getEpics()), 200);
             } else if (path.length == 3 && path[1].equals("epics")) {
                 int idEpic = Integer.parseInt(path[2]);
                 Epic epic = manager.getEpic(idEpic);
-                text = gson.toJson(epic);
-                sendText(httpExchange, text, 200);
+                sendText(httpExchange, gson.toJson(epic), 200);
             } else if (path.length == 4 && path[3].equals("subtasks")) {
                 int idEpic = Integer.parseInt(path[2]);
                 List<Subtask> subtasksIds = manager.getEpicSubtasks(idEpic);
                 if (!subtasksIds.isEmpty()) {
-                    text = gson.toJson(subtasksIds);
-                    sendText(httpExchange, text, 200);
+                    sendText(httpExchange, gson.toJson(subtasksIds), 200);
                 } else {
                     sendNotFound(httpExchange);
                 }
@@ -61,15 +59,19 @@ public class EpicHandler extends BaseHttpHandler {
     }
 
     private void handlePostEpic(HttpExchange httpExchange) throws IOException {
-        String body = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
-        Epic epic = gson.fromJson(body, Epic.class);
-        try {
-            manager.addNewEpic(epic);
-            sendText(httpExchange, "Эпик добавлен", 201);
-        } catch (NotFoundException e) {
-            sendNotFound(httpExchange);
-        }
 
+        try {
+            String body = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+            Epic epic = gson.fromJson(body, Epic.class);
+            try {
+                manager.addNewEpic(epic);
+                sendText(httpExchange, "Эпик добавлен", 201);
+            } catch (NotFoundException e) {
+                sendNotFound(httpExchange);
+            }
+        } catch (NullPointerException exp) {
+            sendText(httpExchange, "Некорректный запрос", 400);
+        }
     }
 
     private void handleDeleteEpic(HttpExchange httpExchange, String[] path) throws IOException {
