@@ -3,7 +3,6 @@ package http.handler;
 import com.sun.net.httpserver.HttpExchange;
 import http.exception.NotFoundException;
 import model.Task;
-import service.TaskValidationException;
 import service.TasksManager;
 
 import java.io.IOException;

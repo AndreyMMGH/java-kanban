@@ -1,6 +1,10 @@
 package http;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpServer;
+import http.adapter.DurationTypeAdapter;
+import http.adapter.LocalDateTimeAdapter;
 import http.handler.PrioritizedHandler;
 import http.handler.EpicHandler;
 import http.handler.HistoryHandler;
@@ -11,6 +15,8 @@ import service.TasksManager;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class HttpTaskServer {
 
@@ -26,7 +32,6 @@ public class HttpTaskServer {
         httpServer.createContext("/prioritized", new PrioritizedHandler(manager));
     }
 
-
     public static void main(String[] args) throws IOException {
         InMemoryTasksManager manager = new InMemoryTasksManager();
         HttpTaskServer httpTaskServer = new HttpTaskServer(manager);
@@ -41,6 +46,15 @@ public class HttpTaskServer {
     public void stop() {
         System.out.println("Сервер остановлен!");
         httpServer.stop(0);
+    }
+
+    public static Gson getGson() {
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+                .registerTypeAdapter(Duration.class, new DurationTypeAdapter())
+                .setPrettyPrinting()
+                .create();
+        return gson;
     }
 
 }
