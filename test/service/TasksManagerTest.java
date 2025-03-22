@@ -1,5 +1,6 @@
 package service;
 
+import http.exception.NotFoundException;
 import org.junit.jupiter.api.Test;
 import model.Epic;
 import model.Status;
@@ -292,7 +293,7 @@ public abstract class TasksManagerTest<T extends TasksManager> {
 
         manager.deleteTask(idSnowRemoval);
 
-        assertNull(manager.getTask(idSnowRemoval), "Задача snowRemoval должна быть удалена");
+        assertThrows(NotFoundException.class, () -> manager.getTask(idSnowRemoval), "Задача snowRemoval должна быть удалена");
         assertNotNull(manager.getTask(idWaterTheFlowers), "Задача waterTheFlowers не должна быть удалена");
     }
 
@@ -305,7 +306,7 @@ public abstract class TasksManagerTest<T extends TasksManager> {
 
         manager.deleteEpic(idChoosingPpuppy);
 
-        assertNull(manager.getEpic(idChoosingPpuppy), "Задача choosingPpuppy должна быть удалена");
+        assertThrows(NotFoundException.class, () -> manager.getEpic(idChoosingPpuppy), "Задача choosingPpuppy должна быть удалена");
         assertNotNull(manager.getEpic(idVacationTrip), "Задача VacationTrip не должна быть удалена");
     }
 
